@@ -1,0 +1,39 @@
+sequenceDiagram
+    participant U as User
+    participant R as React App
+    participant SC as Supabase Client
+    participant S as Supabase
+    participant E as Express API
+    participant A as Supabase Admin Client
+
+    Note over U,A: Authentication Flow
+    U->>R: Click "Sign in with Google"
+    R->>SC: supabase.auth.signInWithOAuth({provider:'google'})
+    SC->>S: OAuth redirect
+    S->>U: Google consent screen
+    U->>S: Grant access
+    S->>R: Redirect with session
+    R->>SC: supabase.auth.getSession()
+    SC->>R: User session + JWT
+
+    Note over U,A: Task CRUD (Regular User)
+    U->>R: Create task
+    R->>SC: supabase.from('tasks').insert({...})
+    SC->>S: Insert with RLS check
+    S->>SC: Inserted row
+    R->>U: Show updated UI
+
+    Note over U,A: Admin Operation
+    U->>R: Admin views all tasks
+    R->>E: GET /api/admin/tasks (JWT header)
+    E->>A: supabaseAdmin.from('tasks').select('*')
+    A->>E: All tasks
+    E->>R: JSON response
+    R->>U: Render admin table
+
+    Note over U,A: Real-time Comments
+    U->>R: Add comment
+    R->>SC: supabase.from('comments').insert({...})
+    R->>SC: channel.on('postgres_changes',...)
+    SC->>R: Real-time update
+    R->>U: New comment appears

@@ -1,0 +1,67 @@
+erDiagram
+    users ||--o{ tasks : creates
+    users ||--o{ task_assignees : assigned
+    users ||--o{ comments : writes
+    users ||--o{ activity_logs : generates
+    users ||--o{ attachments : uploads
+    tasks ||--o{ task_assignees : has
+    tasks ||--o{ comments : has
+    tasks ||--o{ activity_logs : tracks
+    tasks ||--o{ attachments : contains
+
+    users {
+        uuid id PK
+        text email UK
+        text name
+        text avatar_url
+        text role "user|admin"
+        timestamptz created_at
+    }
+
+    tasks {
+        uuid id PK
+        text title
+        text description
+        text status "todo|in_progress|in_review|done"
+        text priority "low|medium|high|critical"
+        uuid assignee_id FK
+        uuid created_by FK
+        date due_date
+        timestamptz completed_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    task_assignees {
+        uuid task_id FK
+        uuid user_id FK
+        uuid assigned_by FK
+    }
+
+    comments {
+        uuid id PK
+        uuid task_id FK
+        uuid user_id FK
+        text content
+        timestamptz created_at
+    }
+
+    activity_logs {
+        uuid id PK
+        uuid task_id FK
+        uuid user_id FK
+        text action
+        jsonb details
+        timestamptz created_at
+    }
+
+    attachments {
+        uuid id PK
+        uuid task_id FK
+        uuid uploaded_by FK
+        text file_path
+        text file_name
+        integer file_size
+        text content_type
+        timestamptz created_at
+    }

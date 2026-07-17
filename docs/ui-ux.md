@@ -1,0 +1,257 @@
+# UCS Task Manager — UI/UX Design
+
+## Design System
+
+### Color Palette
+
+| Token | Hex | Tailwind Class | Usage |
+|---|---|---|---|
+| Primary | `#0EA5E9` | `sky-500` | Buttons, links, active nav |
+| Primary Dark | `#0369A1` | `sky-700` | Hover states |
+| Primary Light | `#E0F2FE` | `sky-100` | Backgrounds, badges |
+| Secondary Text | `#475569` | `slate-600` | Body text |
+| Muted | `#94A3B8` | `slate-400` | Placeholder, helper text |
+| Success | `#10B981` | `emerald-500` | Done, completed |
+| Warning | `#F59E0B` | `amber-500` | Medium priority |
+| Danger | `#EF4444` | `red-500` | Critical priority, delete |
+| Background | `#F8FAFC` | `slate-50` | Page background |
+| Surface | `#FFFFFF` | `white` | Cards, modals |
+| Border | `#E2E8F0` | `slate-200` | Borders, dividers |
+
+### Typography
+
+- **Font Family:** Inter (sans-serif)
+- **Headings:** 600 (semibold)
+- **Body:** 400 (regular)
+- **Small/caption:** 400, text-sm
+
+### Dark Mode
+
+All components support a dark variant. Toggle stored in `localStorage` and applied via Tailwind's `dark:` class on `<html>`.
+
+| Token | Light | Dark |
+|---|---|---|
+| Background | `slate-50` | `slate-900` |
+| Surface | `white` | `slate-800` |
+| Text Primary | `slate-900` | `slate-100` |
+| Text Secondary | `slate-600` | `slate-400` |
+| Border | `slate-200` | `slate-700` |
+
+---
+
+## Page Layout
+
+```
++----------------------------------------------------+
+| [Logo] UCS                              [Avatar] 👤 |  ← Header (h-16)
++----------+-----------------------------------------+
+|          |  [Page Title]                            |
+| 📊 Dashb |  ┌────┬────┬────┬────┐                  |
+| 📋 Board |  │ToDo│In  │In  │Done│                  |  ← Main content
+| 📝 List  |  │    │Prog│Rev │    │                  |     (min-h-[calc(100vh-4rem)])
+| 👥 Team  |  └────┴────┴────┴────┘                  |
+| ⚙️ Admin |                                          |
+|          |  ➕ New Task                             |
++----------+-----------------------------------------+
+  ← Sidebar (w-64)
+```
+
+---
+
+## Wireframes (Text-Based)
+
+### Login Page
+```
+┌─────────────────────────────────────┐
+│                                     │
+│            UCS TASK MANAGER         │
+│                                     │
+│      ┌─────────────────────┐        │
+│      │  Sign in with Google │        │
+│      └─────────────────────┘        │
+│                                     │
+│           © 2026 UCS                │
+└─────────────────────────────────────┘
+```
+
+### Dashboard
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Dashboard                                         👤 John D │
+├──────────────────────────────────────────────────────────────┤
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐         │
+│ │   Total  │ │  Active  │ │ Complete │ │  Overdue │         │
+│ │    42    │ │    17    │ │    18    │ │    5     │         │
+│ └──────────┘ └──────────┘ └──────────┘ └──────────┘         │
+│                                                              │
+│ Recent Tasks                     View All →                  │
+│ ┌──────────────────────────────────────────────────────┐    │
+│ │ 🔴 Design homepage mockup       Due: Jul 20     ⚡  │    │
+│ │ 🟡 Set up CI/CD pipeline        Due: Jul 16  ✓  │    │
+│ │ 🟢 Write API documentation       Done Jul 10  ✓✓  │    │
+│ └──────────────────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Kanban Board
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ Board                                                   🔍 Filter│
+├──────────┬──────────────┬──────────────┬─────────────────────────┤
+│  To Do   │  In Progress │  In Review   │         Done           │
+│   (3)    │     (5)      │    (2)       │        (8)             │
+├──────────┼──────────────┼──────────────┼─────────────────────────┤
+│ ┌──────┐ │ ┌──────────┐ │ ┌──────────┐ │ ┌────────────────────┐ │
+│ │Design│ │ │CI/CD     │ │ │Code      │ │ │API Docs            │ │
+│ │Home  │ │ │Pipeline  │ │ │Review    │ │ │✓ Completed Jul 10  │ │
+│ │High  │ │ │Critical  │ │ │Medium    │ │ │👤 Alice            │ │
+│ │Jul 20│ │ │Jul 16    │ │ │Jul 22    │ │ └────────────────────┘ │
+│ └──────┘ │ └──────────┘ │ └──────────┘ │                        │
+│ ┌──────┐ │ ┌──────────┐ │ ┌──────────┐ │                        │
+│ │DB    │ │ │Login Bug │ │ │           │ │                        │
+│ │Backup│ │ │Critical  │ │ │           │ │                        │
+│ └──────┘ │ └──────────┘ │ └──────────┘ │                        │
+└──────────┴──────────────┴──────────────┴─────────────────────────┘
+```
+
+### Task Detail
+```
+┌──────────────────────────────────────────────────────────────┐
+│ ← Back to Board                                        Edit │
+├──────────────────────────────────────────────────────────────┤
+│ 🔴 Design Homepage Mockup                     🔥 High       │
+│ Created by John · Due Jul 20, 2026                          │
+│ ──────────────────────────────────────────────────────────── │
+│ Create wireframes for the new company homepage               │
+│ including mobile and desktop layouts.                        │
+│                                                              │
+│ Assignees: 👤 John  👤 Alice  👤 Bob                         │
+│ Status:    ● In Progress                                     │
+│ Priority:  🔥 High                                           │
+│ ──────────────────────────────────────────────────────────── │
+│ 💬 Comments                                   [Real-time]    │
+│ ┌────────────────────────────────────────────────────────┐  │
+│ │ Alice — "I'll start on the mobile layout today" 10:32  │  │
+│ │ Bob   — "Desktop wireframes are ready for review" 11:05│  │
+│ └────────────────────────────────────────────────────────┘  │
+│ ┌─────────────────────────────────────────────────┐        │
+│ │ Write a comment...                         Send │        │
+│ └─────────────────────────────────────────────────┘        │
+│ ──────────────────────────────────────────────────────────── │
+│ 📋 Activity Log                                              │
+│ 🕐 John created task — Jul 14, 2026 09:00                  │
+│ 🕐 John assigned Alice — Jul 14, 2026 09:05                │
+│ 🕐 Alice changed status to In Progress — Jul 14, 2026 10:00│
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Admin Dashboard
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Admin Dashboard                                🖨️ Print PDF │
+├──────────────────────────────────────────────────────────────┤
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐         │
+│ │Total     │ │ Active   │ │Completed │ │Overdue   │         │
+│ │ 142      │ │  58      │ │  62      │ │  22      │         │
+│ └──────────┘ └──────────┘ └──────────┘ └──────────┘         │
+│                                                              │
+│ 📈 Tasks by Status                    📊 Tasks by Priority  │
+│ ┌──────────────────────┐             ┌────────────────────┐  │
+│ │ [Bar chart]          │             │ [Pie chart]        │  │
+│ │ Todo InP InR Done    │             │ Low Med High Crit  │  │
+│ └──────────────────────┘             └────────────────────┘  │
+│                                                              │
+│ All Tasks (142)               Status: All ▼  Search...     │
+│ ┌────┬──────────┬────────┬────────┬──────────┬──────────┐  │
+│ │ #  │ Title    │ Owner  │ Status │ Priority │ Due      │  │
+│ ├────┼──────────┼────────┼────────┼──────────┼──────────┤  │
+│ │ 1  │ Design…  │ John   │ In Pr  │ 🔥 High  │ Jul 20   │  │
+│ │ 2  │ CI/CD    │ Alice  │ To Do  │ 🔥 Crit  │ Jul 16   │  │
+│ └────┴──────────┴────────┴────────┴──────────┴──────────┘  │
+│                                                ← 1 2 3 ... →│
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Component Tree
+
+```
+App
+├── AuthProvider
+│   ├── ThemeProvider
+│   │   ├── LoginPage
+│   │   │   └── GoogleSignInButton
+│   │   └── AppLayout
+│   │       ├── Sidebar
+│   │       │   ├── Logo
+│   │       │   ├── NavItem (Dashboard)
+│   │       │   ├── NavItem (Board)
+│   │       │   ├── NavItem (List)
+│   │       │   ├── NavItem (Team)
+│   │       │   ├── NavItem (Admin) — only for admin role
+│   │       │   └── NavItem (Logout)
+│   │       ├── Header
+│   │       │   ├── Breadcrumb
+│   │       │   ├── SearchInput
+│   │       │   └── UserMenu
+│   │       │       ├── Avatar
+│   │       │       ├── Profile link
+│   │       │       └── DarkModeToggle
+│   │       └── MainContent (routes)
+│   │           ├── DashboardPage
+│   │           │   ├── StatsCard[]
+│   │           │   └── RecentTasksTable
+│   │           ├── BoardPage
+│   │           │   └── KanbanBoard
+│   │           │       ├── KanbanColumn (To Do)
+│   │           │       │   └── TaskCard[]
+│   │           │       ├── KanbanColumn (In Progress)
+│   │           │       │   └── TaskCard[]
+│   │           │       ├── KanbanColumn (In Review)
+│   │           │       │   └── TaskCard[]
+│   │           │       └── KanbanColumn (Done)
+│   │           │           └── TaskCard[]
+│   │           ├── TaskListPage
+│   │           │   ├── TaskFilters
+│   │           │   ├── NewTaskButton
+│   │           │   └── TaskTable
+│   │           │       └── TaskRow[]
+│   │           ├── TaskDetailPage
+│   │           │   ├── TaskHeader
+│   │           │   ├── TaskInfo
+│   │           │   ├── CommentSection
+│   │           │   │   ├── CommentList
+│   │           │   │   │   └── CommentItem[]
+│   │           │   │   └── CommentInput
+│   │           │   └── ActivityLog
+│   │           │       └── ActivityItem[]
+│   │           ├── CreateTaskPage / EditTaskPage
+│   │           │   └── TaskForm
+│   │           │       ├── InputField (title)
+│   │           │       ├── Textarea (description)
+│   │           │       ├── Select (status)
+│   │           │       ├── Select (priority)
+│   │           │       ├── DatePicker (due date)
+│   │           │       ├── AssigneeSelect (multi)
+│   │           │       └── FileUpload
+│   │           ├── AdminPage
+│   │           │   ├── StatsCard[]
+│   │           │   ├── AnalyticsCharts
+│   │           │   ├── AdminTaskTable
+│   │           │   └── PrintReportButton
+│   │           ├── TeamPage
+│   │           │   └── TeamMemberCard[]
+│   │           └── ProfilePage
+│   │               └── ProfileForm
+```
+
+---
+
+## Responsive Breakpoints
+
+| Breakpoint | Width | Layout |
+|---|---|---|
+| Mobile | < 768px | Sidebar hidden (hamburger menu), single column |
+| Tablet | 768–1024px | Collapsed sidebar (icons only), 2-column |
+| Desktop | > 1024px | Full sidebar, multi-column layouts |

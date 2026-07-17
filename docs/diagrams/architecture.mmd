@@ -1,0 +1,41 @@
+graph TB
+    User([User Browser])
+    Admin([Admin Browser])
+
+    subgraph "Client Layer"
+        React[React App\nVite + TypeScript + Tailwind]
+        SupaClient[Supabase JS Client]
+        AuthCtx[Auth Context\nGoogle OAuth]
+        RealtimeSub[Realtime Subscriptions]
+    end
+
+    subgraph "Supabase Cloud"
+        Auth[Supabase Auth\nGoogle Provider]
+        DB[(PostgreSQL\nDatabase)]
+        Storage[Supabase Storage\nAttachments]
+        Realtime[Supabase Realtime\nWebSocket]
+    end
+
+    subgraph "Backend Layer (Express)"
+        Express[Express Server\nTypeScript]
+        AdminAPI[Admin Routes]
+        ReportService[Report Service]
+        NotificationSvc[Notification Service]
+        SupaAdmin[Supabase Admin Client\nservice_role key]
+    end
+
+    User --> React
+    Admin --> React
+
+    React --> SupaClient
+    SupaClient -->|RLS queries| DB
+    SupaClient -->|Auth requests| Auth
+    SupaClient -->|Upload/Download| Storage
+    SupaClient -->|Subscribe| Realtime
+
+    Express --> SupaAdmin
+    SupaAdmin -->|Bypass RLS| DB
+    Express -->|SendGrid / SMTP| Email([Email Notifications])
+
+    AdminAPI --> Express
+    AuthCtx --> SupaClient

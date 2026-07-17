@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant User
+    participant React as React App
+    participant Supa as Supabase Auth
+    participant Google
+    participant DB as PostgreSQL
+
+    User->>React: Click "Sign in with Google"
+    React->>Supa: supabase.auth.signInWithOAuth({provider:'google'})
+    Supa->>Google: Redirect to Google OAuth
+    Google->>User: "Choose an account"
+    User->>Google: Select account & grant
+    Google->>Supa: Authorization code
+    Supa->>DB: INSERT INTO auth.users
+    Note over DB: Trigger: handle_new_user()\nINSERT INTO public.users
+    Supa->>React: Redirect with session
+    React->>Supa: supabase.auth.getSession()
+    Supa->>React: { access_token, refresh_token, user }
+    React->>Supa: supabase.auth.getUser()
+    Supa->>React: User metadata
+    Note over React: AuthContext stores user\nRedirect to /dashboard

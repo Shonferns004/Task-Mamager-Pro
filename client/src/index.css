@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #0EA5E9;
+  --color-primary-dark: #0369A1;
+  --color-primary-light: #E0F2FE;
+}
+
+@layer base {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}

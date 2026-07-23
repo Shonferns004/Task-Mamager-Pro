@@ -15,9 +15,8 @@ import { STATUS_LABELS, PRIORITY_LABELS } from '../lib/constants'
 import type { TaskStatus, TaskPriority, User } from '../types'
 
 const statusOptions = [
-  { value: 'todo', label: 'To Do' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'in_review', label: 'In Review' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'partially_done', label: 'Partially Done' },
   { value: 'done', label: 'Done' },
 ]
 
@@ -38,9 +37,8 @@ export function TaskListPage() {
   const [saving, setSaving] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newDesc, setNewDesc] = useState('')
-  const [newStatus, setNewStatus] = useState<TaskStatus>('todo')
+  const [newStatus, setNewStatus] = useState<TaskStatus>('pending')
   const [newPriority, setNewPriority] = useState<TaskPriority>('medium')
-  const [newDue, setNewDue] = useState('')
   const [users, setUsers] = useState<User[]>([])
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([])
   const [stats, setStats] = useState({ total: 0, completed: 0, inProgress: 0, overdue: 0 })
@@ -49,7 +47,7 @@ export function TaskListPage() {
   useEffect(() => {
     if (!isAdmin) return
     const completed = tasks.filter((t) => t.status === 'done').length
-    const inProgress = tasks.filter((t) => t.status === 'in_progress' || t.status === 'in_review').length
+    const inProgress = tasks.filter((t) => t.status === 'partially_done').length
     const overdue = tasks.filter((t) => !t.completed_at && isOverdue(t.due_date)).length
     setStats({ total: tasks.length, completed, inProgress, overdue })
   }, [tasks, isAdmin])
@@ -61,8 +59,8 @@ export function TaskListPage() {
     return true
   }), [tasks, search, statusFilter, priorityFilter])
 
-  const openCreate = () => { setNewTitle(''); setNewDesc(''); setNewStatus('todo'); setNewPriority('medium'); setNewDue(''); setSelectedAssignees([]); setShowCreate(true) }
-  const handleCreate = async (e: React.FormEvent) => { e.preventDefault(); if (!newTitle.trim()) return; setSaving(true); await api.createTask({ title: newTitle.trim(), description: newDesc.trim(), status: newStatus, priority: newPriority, due_date: newDue || null, assignee_ids: selectedAssignees }); setSaving(false); setShowCreate(false); refetch() }
+  const openCreate = () => { setNewTitle(''); setNewDesc(''); setNewStatus('pending'); setNewPriority('medium'); setSelectedAssignees([]); setShowCreate(true) }
+  const handleCreate = async (e: React.FormEvent) => { e.preventDefault(); if (!newTitle.trim()) return; setSaving(true); await api.createTask({ title: newTitle.trim(), description: newDesc.trim(), status: newStatus, priority: newPriority, assignee_ids: selectedAssignees }); setSaving(false); setShowCreate(false); refetch() }
   const toggleAssignee = (userId: string) => setSelectedAssignees((prev) => prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId])
   const handleExport = () => {
     const source = isAdmin ? tasks : filtered
@@ -100,7 +98,6 @@ export function TaskListPage() {
             <Select id="m-status" label="Status" value={newStatus} onChange={(e) => setNewStatus(e.target.value as TaskStatus)} options={statusOptions} />
             <Select id="m-priority" label="Priority" value={newPriority} onChange={(e) => setNewPriority(e.target.value as TaskPriority)} options={priorityOptions} />
           </div>
-          <Input id="m-due" label="Due Date" type="date" value={newDue} onChange={(e) => setNewDue(e.target.value)} />
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Assignees</label>
             <div className="max-h-40 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-200 dark:border-gray-600 dark:divide-gray-700">
@@ -139,7 +136,7 @@ export function TaskListPage() {
           <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
             <h3 className="mb-3 text-sm font-semibold text-gray-900 lg:mb-4">Tasks by Status</h3>
             <div className="space-y-2 lg:space-y-3">
-              {(['todo', 'in_progress', 'in_review', 'done'] as TaskStatus[]).map((s) => {
+              {(['pending', 'partially_done', 'done'] as TaskStatus[]).map((s) => {
                 const count = tasks.filter((t) => t.status === s).length; const pct = Math.round((count / tasks.length) * 100)
                 return (<div key={s}><div className="flex items-center justify-between text-sm"><span className="text-gray-700">{STATUS_LABELS[s]}</span><span className="font-medium text-gray-900">{count}</span></div><div className="mt-1 h-2 rounded-full bg-gray-200"><div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} /></div></div>)
               })}
@@ -191,7 +188,7 @@ export function TaskListPage() {
                 <tr key={task.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
                   <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{task.title}</td>
                   {isAdmin && <td className="px-6 py-4 text-sm text-gray-500">{(task as any).created_by_user?.name || 'Unknown'}</td>}
-                  <td className="px-6 py-4"><Badge variant={task.status === 'done' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'in_review' ? 'warning' : 'default'}>{STATUS_LABELS[task.status]}</Badge></td>
+                  <td className="px-6 py-4"><Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>{STATUS_LABELS[task.status]}</Badge></td>
                   <td className="px-6 py-4"><Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge></td>
                   <td className="px-6 py-4 text-sm text-gray-500">{task.due_date && <span className={isOverdue(task.due_date) ? 'text-red-500' : ''}>{formatDate(task.due_date)}</span>}</td>
                 </tr>
@@ -205,7 +202,7 @@ export function TaskListPage() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <Badge variant={task.status === 'done' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'in_review' ? 'warning' : 'default'}>{STATUS_LABELS[task.status]}</Badge>
+                  <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>{STATUS_LABELS[task.status]}</Badge>
                   <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge>
                   {isAdmin && <span className="text-xs text-gray-400">{(task as any).created_by_user?.name || 'Unknown'}</span>}
                 </div>

@@ -11,9 +11,8 @@ import { Check } from 'lucide-react'
 import type { TaskStatus, TaskPriority, User } from '../types'
 
 const statusOptions = [
-  { value: 'todo', label: 'To Do' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'in_review', label: 'In Review' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'partially_done', label: 'Partially Done' },
   { value: 'done', label: 'Done' },
 ]
 
@@ -33,9 +32,8 @@ export function TaskFormPage() {
   const [saving, setSaving] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [status, setStatus] = useState<TaskStatus>('todo')
+  const [status, setStatus] = useState<TaskStatus>('pending')
   const [priority, setPriority] = useState<TaskPriority>('medium')
-  const [dueDate, setDueDate] = useState('')
   const [users, setUsers] = useState<User[]>([])
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([])
 
@@ -44,7 +42,7 @@ export function TaskFormPage() {
     if (!id) return
     api.getTask(id).then(({ task: data }) => {
       const t = data as any
-      setTitle(t.title); setDescription(t.description || ''); setStatus(t.status); setPriority(t.priority); setDueDate(t.due_date || '')
+      setTitle(t.title); setDescription(t.description || ''); setStatus(t.status); setPriority(t.priority)
       if (isAdmin) setSelectedAssignees(t.task_assignees?.map((a: any) => a.user_id) || [])
       setLoading(false)
     })
@@ -54,7 +52,7 @@ export function TaskFormPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); if (!title.trim()) return; setSaving(true)
-    const payload: any = { title: title.trim(), description: description.trim(), status, priority, due_date: dueDate || null }
+    const payload: any = { title: title.trim(), description: description.trim(), status, priority }
     if (isAdmin) payload.assignee_ids = selectedAssignees
     if (isEdit) { await api.updateTask(id!, payload); navigate(`/tasks/${id}`) }
     else { const { task } = await api.createTask(payload); navigate(`/tasks/${task.id}`) }
@@ -76,7 +74,6 @@ export function TaskFormPage() {
           <Select id="status" label="Status" value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} options={statusOptions} />
           <Select id="priority" label="Priority" value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)} options={priorityOptions} />
         </div>
-        <Input id="dueDate" label="Due Date" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         {isAdmin && (
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Assignees</label>

@@ -26,8 +26,8 @@ export function TeamPage() {
         {users.filter((u) => isAdmin || u.role !== 'admin').map((user) => {
           const userTasks = tasks.filter((t) => t.created_by === user.id || t.task_assignees?.some((a) => a.user_id === user.id))
           const completed = userTasks.filter((t) => t.status === 'done').length
-          const ongoing = userTasks.filter((t) => t.status === 'in_progress' || t.status === 'in_review').length
-          const todo = userTasks.filter((t) => t.status === 'todo').length
+          const ongoing = userTasks.filter((t) => t.status === 'partially_done').length
+          const todo = userTasks.filter((t) => t.status === 'pending').length
           return (
             <button
               key={user.id}
@@ -46,7 +46,7 @@ export function TeamPage() {
                 {user.role === 'admin' && <Badge variant="info">Admin</Badge>}
               </div>
               <div className="mt-3 flex items-center gap-4 text-xs text-gray-500 lg:mt-4 lg:text-sm">
-                <span><strong className="text-gray-900 dark:text-white">{todo}</strong> To Do</span>
+                <span><strong className="text-gray-900 dark:text-white">{todo}</strong> Pending</span>
                 <span><strong className="text-amber-600">{ongoing}</strong> Active</span>
                 <span><strong className="text-emerald-600">{completed}</strong> Done</span>
               </div>

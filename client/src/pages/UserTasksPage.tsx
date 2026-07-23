@@ -4,13 +4,13 @@ import { api } from '../lib/api'
 import { useTasks } from '../hooks/useTasks'
 import { UserTasksSkeleton } from '../components/ui/PageSkeleton'
 import { Badge } from '../components/ui/Badge'
-import { ArrowLeft, ListTodo, Clock, CheckCircle2, Eye, Calendar, Mail } from 'lucide-react'
+import { ArrowLeft, Circle, Clock, CheckCircle2, Calendar, Mail } from 'lucide-react'
 import { formatDate, isOverdue } from '../lib/utils'
 import { STATUS_LABELS, PRIORITY_LABELS } from '../lib/constants'
 import type { User, TaskStatus } from '../types'
 
-const statusIcons: Record<TaskStatus, typeof ListTodo> = {
-  todo: ListTodo, in_progress: Clock, in_review: Eye, done: CheckCircle2,
+const statusIcons: Record<TaskStatus, typeof Circle> = {
+  pending: Circle, partially_done: Clock, done: CheckCircle2,
 }
 
 export function UserTasksPage() {
@@ -34,7 +34,7 @@ export function UserTasksPage() {
   const userTasks = tasks.filter(
     (t) => t.created_by === userId || t.task_assignees?.some((a) => a.user_id === userId)
   )
-  const statusOrder: TaskStatus[] = ['todo', 'in_progress', 'in_review', 'done']
+  const statusOrder: TaskStatus[] = ['pending', 'partially_done', 'done']
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -52,7 +52,7 @@ export function UserTasksPage() {
             <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
               <span><strong className="text-gray-900 dark:text-white">{userTasks.length}</strong> total tasks</span>
               <span><strong className="text-emerald-600">{userTasks.filter((t) => t.status === 'done').length}</strong> completed</span>
-              <span><strong className="text-amber-600">{userTasks.filter((t) => t.status === 'in_progress' || t.status === 'in_review').length}</strong> active</span>
+              <span><strong className="text-amber-600">{userTasks.filter((t) => t.status === 'partially_done').length}</strong> active</span>
             </div>
           </div>
         </div>

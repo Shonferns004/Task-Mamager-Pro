@@ -76,7 +76,7 @@ Returns all tasks across all users (admin only).
       "id": "uuid",
       "title": "string",
       "description": "string",
-      "status": "todo|in_progress|in_review|done",
+      "status": "pending|partially_done|done",
       "priority": "low|medium|high|critical",
       "created_by": { "id": "uuid", "name": "string", "email": "string" },
       "assignees": [{ "id": "uuid", "name": "string" }],
@@ -96,9 +96,9 @@ Returns aggregated statistics.
 {
   "total_tasks": 42,
   "completed_tasks": 18,
-  "in_progress_tasks": 12,
+  "in_progress_tasks": 17,
   "overdue_tasks": 5,
-  "tasks_by_status": { "todo": 10, "in_progress": 12, "in_review": 5, "done": 15 },
+  "tasks_by_status": { "pending": 10, "partially_done": 17, "done": 15 },
   "tasks_by_priority": { "low": 5, "medium": 15, "high": 12, "critical": 10 },
   "recent_activity": [
     { "action": "task_created", "user_name": "John", "created_at": "..." }

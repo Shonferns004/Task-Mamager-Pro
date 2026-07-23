@@ -33,7 +33,7 @@ erDiagram
         uuid id PK
         text title
         text description
-        text status "todo|in_progress|in_review|done"
+        text status "pending|partially_done|done"
         text priority "low|medium|high|critical"
         uuid assignee_id FK
         uuid created_by FK
@@ -128,8 +128,8 @@ CREATE TABLE tasks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT DEFAULT '',
-  status TEXT NOT NULL DEFAULT 'todo'
-    CHECK (status IN ('todo', 'in_progress', 'in_review', 'done')),
+  status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'partially_done', 'done')),
   priority TEXT NOT NULL DEFAULT 'medium'
     CHECK (priority IN ('low', 'medium', 'high', 'critical')),
   created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -378,11 +378,11 @@ UPDATE users SET role = 'admin' WHERE email = 'admin@ucs.com';
 -- Sample tasks for demo
 INSERT INTO tasks (title, description, status, priority, created_by, due_date)
 VALUES
-  ('Design homepage mockup', 'Create wireframes for the new homepage', 'todo', 'high', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '7 days'),
-  ('Set up CI/CD pipeline', 'Configure GitHub Actions for automated deployment', 'in_progress', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '3 days'),
+  ('Design homepage mockup', 'Create wireframes for the new homepage', 'pending', 'high', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '7 days'),
+  ('Set up CI/CD pipeline', 'Configure GitHub Actions for automated deployment', 'partially_done', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '3 days'),
   ('Write API documentation', 'Document all REST endpoints with examples', 'done', 'medium', (SELECT id FROM users LIMIT 1), NOW() - INTERVAL '1 day'),
-  ('Fix login bug', 'Users reporting 500 error on Google sign-in', 'in_progress', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '1 day'),
-  ('Database backup strategy', 'Implement automated daily backups', 'todo', 'medium', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '14 days');
+  ('Fix login bug', 'Users reporting 500 error on Google sign-in', 'partially_done', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '1 day'),
+  ('Database backup strategy', 'Implement automated daily backups', 'pending', 'medium', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '14 days');
 ```
 
 ---

@@ -13,9 +13,8 @@ import { STATUS_LABELS, PRIORITY_LABELS } from '../lib/constants'
 import type { Task, AdminStats, TaskStatus, TaskPriority, User } from '../types'
 
 const statusOptions = [
-  { value: 'todo', label: 'To Do' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'in_review', label: 'In Review' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'partially_done', label: 'Partially Done' },
   { value: 'done', label: 'Done' },
 ]
 
@@ -37,9 +36,8 @@ export function AdminPage() {
   const [saving, setSaving] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [status, setStatus] = useState<TaskStatus>('todo')
+  const [status, setStatus] = useState<TaskStatus>('pending')
   const [priority, setPriority] = useState<TaskPriority>('medium')
-  const [dueDate, setDueDate] = useState('')
   const [users, setUsers] = useState<User[]>([])
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([])
 
@@ -59,9 +57,9 @@ export function AdminPage() {
     if (taskData) {
       setTasks(taskData as unknown as Task[])
       const completed = taskData.filter((t: Task) => t.status === 'done').length
-      const inProgress = taskData.filter((t: Task) => t.status === 'in_progress' || t.status === 'in_review').length
+      const inProgress = taskData.filter((t: Task) => t.status === 'partially_done').length
       const overdue = taskData.filter((t: Task) => !t.completed_at && isOverdue(t.due_date)).length
-      const byStatus = { todo: 0, in_progress: 0, in_review: 0, done: 0 }
+      const byStatus = { pending: 0, partially_done: 0, done: 0 }
       const byPriority = { low: 0, medium: 0, high: 0, critical: 0 }
       taskData.forEach((t: Task) => { byStatus[t.status]++; byPriority[t.priority]++ })
       setStats({
@@ -92,8 +90,8 @@ export function AdminPage() {
   }
 
   const openCreate = () => {
-    setTitle(''); setDescription(''); setStatus('todo'); setPriority('medium')
-    setDueDate(''); setSelectedAssignees([]); setShowCreate(true)
+    setTitle(''); setDescription(''); setStatus('pending'); setPriority('medium')
+    setSelectedAssignees([]); setShowCreate(true)
   }
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -105,7 +103,6 @@ export function AdminPage() {
       title: title.trim(),
       description: description.trim(),
       status, priority,
-      due_date: dueDate || null,
       created_by: supabaseUser,
     }).select().single()
 
@@ -156,7 +153,6 @@ export function AdminPage() {
             <Select id="modal-status" label="Status" value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} options={statusOptions} />
             <Select id="modal-priority" label="Priority" value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)} options={priorityOptions} />
           </div>
-          <Input id="modal-due" label="Due Date" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Assignees</label>
             <div className="max-h-40 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-200 dark:border-gray-600 dark:divide-gray-700">
@@ -264,7 +260,7 @@ export function AdminPage() {
                   <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{task.title}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{task.created_by_user?.name || 'Unknown'}</td>
                   <td className="px-6 py-4">
-                    <Badge variant={task.status === 'done' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'in_review' ? 'warning' : 'default'}>
+                    <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>
                       {STATUS_LABELS[task.status]}
                     </Badge>
                   </td>
@@ -288,7 +284,7 @@ export function AdminPage() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate dark:text-white">{task.title}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <Badge variant={task.status === 'done' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'in_review' ? 'warning' : 'default'}>
+                  <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>
                     {STATUS_LABELS[task.status]}
                   </Badge>
                   <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>

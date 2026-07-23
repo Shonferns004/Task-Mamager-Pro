@@ -23,7 +23,7 @@ CREATE TABLE tasks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT DEFAULT '',
-  status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'in_review', 'done')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'partially_done', 'done')),
   priority TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   due_date DATE,

@@ -28,7 +28,7 @@ export function DashboardPage() {
   useEffect(() => {
     if (!tasks.length) return
     const completed = tasks.filter((t) => t.status === 'done').length
-    const inProgress = tasks.filter((t) => t.status === 'in_progress' || t.status === 'in_review').length
+    const inProgress = tasks.filter((t) => t.status === 'partially_done').length
     const overdue = tasks.filter((t) => !t.completed_at && isOverdue(t.due_date)).length
     setStats({ total: tasks.length, completed, inProgress, overdue })
   }, [tasks])

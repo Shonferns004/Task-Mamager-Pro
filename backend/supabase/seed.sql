@@ -7,8 +7,8 @@
 -- Sample tasks (run after at least one user exists)
 -- INSERT INTO tasks (title, description, status, priority, created_by, due_date)
 -- VALUES
---   ('Design homepage mockup', 'Create wireframes for the new company homepage', 'todo', 'high', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '7 days'),
---   ('Set up CI/CD pipeline', 'Configure GitHub Actions for automated deployment', 'in_progress', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '3 days'),
+--   ('Design homepage mockup', 'Create wireframes for the new company homepage', 'pending', 'high', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '7 days'),
+--   ('Set up CI/CD pipeline', 'Configure GitHub Actions for automated deployment', 'partially_done', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '3 days'),
 --   ('Write API documentation', 'Document all REST endpoints with examples', 'done', 'medium', (SELECT id FROM users LIMIT 1), NOW() - INTERVAL '1 day'),
---   ('Fix login bug', 'Users reporting errors on Google sign-in', 'in_progress', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '1 day'),
---   ('Database backup strategy', 'Implement automated daily backups', 'todo', 'medium', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '14 days');
+--   ('Fix login bug', 'Users reporting errors on Google sign-in', 'partially_done', 'critical', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '1 day'),
+--   ('Database backup strategy', 'Implement automated daily backups', 'pending', 'medium', (SELECT id FROM users LIMIT 1), NOW() + INTERVAL '14 days');

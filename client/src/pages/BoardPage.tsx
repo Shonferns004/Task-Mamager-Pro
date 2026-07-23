@@ -8,15 +8,14 @@ import { useTasks } from '../hooks/useTasks'
 import { api } from '../lib/api'
 import { BoardSkeleton } from '../components/ui/PageSkeleton'
 import { Badge } from '../components/ui/Badge'
-import { Plus, ListTodo, Clock, CheckCircle2, Eye } from 'lucide-react'
+import { Plus, Circle, Clock, CheckCircle2 } from 'lucide-react'
 import { formatDate, isOverdue } from '../lib/utils'
 import { STATUS_LABELS, PRIORITY_LABELS } from '../lib/constants'
 import type { Task, TaskStatus } from '../types'
 
-const columns: { id: TaskStatus; icon: typeof ListTodo; color: string }[] = [
-  { id: 'todo', icon: ListTodo, color: 'text-gray-500' },
-  { id: 'in_progress', icon: Clock, color: 'text-blue-500' },
-  { id: 'in_review', icon: Eye, color: 'text-amber-500' },
+const columns: { id: TaskStatus; icon: typeof Circle; color: string }[] = [
+  { id: 'pending', icon: Circle, color: 'text-gray-500' },
+  { id: 'partially_done', icon: Clock, color: 'text-blue-500' },
   { id: 'done', icon: CheckCircle2, color: 'text-emerald-500' },
 ]
 

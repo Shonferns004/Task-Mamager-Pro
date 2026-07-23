@@ -8,7 +8,7 @@ export interface User {
   created_at: string
 }
 
-export type TaskStatus = 'todo' | 'in_progress' | 'in_review' | 'done'
+export type TaskStatus = 'pending' | 'partially_done' | 'done'
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical'
 
 export interface Task {

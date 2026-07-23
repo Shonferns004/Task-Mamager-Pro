@@ -40,7 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
   const { data: task, error } = await supabaseAdmin.from('tasks').insert({
     title: title.trim(),
     description: description?.trim() || '',
-    status: status || 'todo',
+    status: status || 'pending',
     priority: priority || 'medium',
     due_date: due_date || null,
     created_by: req.userId,

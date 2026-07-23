@@ -40,7 +40,7 @@ export function TaskDetailPage() {
       <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
         <div className="mb-3 flex flex-wrap items-center gap-2 lg:mb-4">
           <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge>
-          <Badge variant={task.status === 'done' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'in_review' ? 'warning' : 'default'}>{STATUS_LABELS[task.status]}</Badge>
+          <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>{STATUS_LABELS[task.status]}</Badge>
         </div>
         <h1 className="text-xl font-bold text-gray-900 dark:text-white lg:text-2xl">{task.title}</h1>
         <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 lg:mt-4 lg:gap-6">

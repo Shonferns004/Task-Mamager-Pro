@@ -7,10 +7,9 @@ import {
 import { useTasks } from '../hooks/useTasks'
 import { api } from '../lib/api'
 import { BoardSkeleton } from '../components/ui/PageSkeleton'
-import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 import { Plus, Circle, Clock, CheckCircle2 } from 'lucide-react'
-import { formatDate, isOverdue } from '../lib/utils'
-import { STATUS_LABELS, PRIORITY_LABELS } from '../lib/constants'
+import { STATUS_LABELS } from '../lib/constants'
 import type { Task, TaskStatus } from '../types'
 
 const columns: { id: TaskStatus; icon: typeof Circle; color: string }[] = [
@@ -19,21 +18,13 @@ const columns: { id: TaskStatus; icon: typeof Circle; color: string }[] = [
   { id: 'done', icon: CheckCircle2, color: 'text-emerald-500' },
 ]
 
-const priorityBorder: Record<string, string> = {
-  critical: 'border-l-red-500', high: 'border-l-amber-500', medium: 'border-l-blue-500', low: 'border-l-gray-300 dark:border-l-gray-600',
-}
-
 function DraggableTask({ task }: { task: Task }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id })
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)`, zIndex: 50 } : undefined
   return (
     <Link ref={setNodeRef} to={`/tasks/${task.id}`} {...listeners} {...attributes} style={style}
-      className={`block rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-md border-l-4 ${priorityBorder[task.priority]} dark:border-gray-700 dark:bg-gray-800 ${isDragging ? 'opacity-30' : ''}`}>
-      <div className="mb-2 flex items-center gap-2">
-        <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge>
-      </div>
-      <h4 className="text-sm font-medium text-gray-900 dark:text-white">{task.title}</h4>
-      {task.due_date && <p className={`mt-2 text-xs ${isOverdue(task.due_date) ? 'text-red-500 font-medium' : 'text-gray-500 dark:text-gray-400'}`}>{isOverdue(task.due_date) ? '🔴 ' : '📅 '}{formatDate(task.due_date)}</p>}
+      className={`block rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800 ${isDragging ? 'opacity-30' : ''}`}>
+      <p className="text-sm font-medium text-gray-900 dark:text-white">{task.description || task.title}</p>
       {task.task_assignees && task.task_assignees.length > 0 && (
         <div className="mt-2 flex items-center gap-1">
           {task.task_assignees.slice(0, 3).map((a) => (
@@ -67,9 +58,12 @@ function DroppableColumn({ status, children, count }: { status: TaskStatus; chil
   )
 }
 
-export function BoardPage() {
+export function TasksPage() {
   const { tasks, loading, refetch } = useTasks()
   const [activeTask, setActiveTask] = useState<Task | null>(null)
+  const [addingTo, setAddingTo] = useState<TaskStatus | null>(null)
+  const [newDesc, setNewDesc] = useState('')
+  const [saving, setSaving] = useState(false)
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
   const getColumnTasks = useCallback((status: TaskStatus) => tasks.filter((t) => t.status === status), [tasks])
 
@@ -89,29 +83,57 @@ export function BoardPage() {
     refetch()
   }
 
+  const startAdd = (status: TaskStatus) => {
+    setAddingTo(status)
+    setNewDesc('')
+  }
+
+  const handleAdd = async (status: TaskStatus) => {
+    if (!newDesc.trim()) return
+    setSaving(true)
+    await api.createTask({ description: newDesc.trim(), status })
+    setSaving(false)
+    setAddingTo(null)
+    setNewDesc('')
+    refetch()
+  }
+
   if (loading) return <BoardSkeleton />
 
   return (
     <div className="space-y-4 lg:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white lg:text-2xl">Board</h1>
-        <Link to="/tasks/new" className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-dark transition-colors lg:px-4">
-          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New Task</span>
-        </Link>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white lg:text-2xl">Tasks</h1>
       </div>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex flex-col gap-4 pb-4 lg:flex-row lg:gap-4">
           {columns.map((col) => (
-            <DroppableColumn key={col.id} status={col.id} count={getColumnTasks(col.id).length}>
-              {getColumnTasks(col.id).map((task) => <DraggableTask key={task.id} task={task} />)}
-            </DroppableColumn>
+            <div key={col.id} className="flex w-full flex-col lg:flex-1">
+              <DroppableColumn status={col.id} count={getColumnTasks(col.id).length}>
+                {getColumnTasks(col.id).map((task) => <DraggableTask key={task.id} task={task} />)}
+              </DroppableColumn>
+              {addingTo === col.id ? (
+                <div className="mt-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+                  <textarea value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder="Describe the task..." rows={2} autoFocus
+                    className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" />
+                  <div className="mt-2 flex items-center gap-2">
+                    <Button size="sm" onClick={() => handleAdd(col.id)} loading={saving} disabled={!newDesc.trim()}>Add</Button>
+                    <Button size="sm" variant="secondary" onClick={() => setAddingTo(null)}>Cancel</Button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => startAdd(col.id)}
+                  className="mt-2 flex items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-gray-200 py-2.5 text-sm text-gray-400 transition-colors hover:border-primary/50 hover:text-primary dark:border-gray-700 dark:hover:border-primary/50">
+                  <Plus className="h-4 w-4" /> Add Task
+                </button>
+              )}
+            </div>
           ))}
         </div>
         <DragOverlay>
           {activeTask && (
-            <div className={`rounded-lg border border-gray-200 bg-white p-3 shadow-xl border-l-4 ${priorityBorder[activeTask.priority]} dark:border-gray-700 dark:bg-gray-800`}>
-              <div className="mb-2"><Badge variant={activeTask.priority === 'critical' ? 'danger' : activeTask.priority === 'high' ? 'warning' : activeTask.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[activeTask.priority]}</Badge></div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">{activeTask.title}</p>
+            <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{activeTask.description || activeTask.title}</p>
             </div>
           )}
         </DragOverlay>

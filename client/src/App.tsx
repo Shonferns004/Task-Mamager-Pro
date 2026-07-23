@@ -6,10 +6,9 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { AppLayout } from './components/layout/AppLayout'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
-import { BoardPage } from './pages/BoardPage'
+import { TasksPage } from './pages/TasksPage'
 import { TaskListPage } from './pages/TaskListPage'
 import { TaskDetailPage } from './pages/TaskDetailPage'
-import { TaskFormPage } from './pages/TaskFormPage'
 import { TeamPage } from './pages/TeamPage'
 import { UserTasksPage } from './pages/UserTasksPage'
 import { ProfilePage } from './pages/ProfilePage'
@@ -46,10 +45,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-function UserRoute({ children }: { children: React.ReactNode }) {
+function AdminRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAuth()
   if (loading) return <AppLoading />
-  if (isAdmin) return <Navigate to="/tasks" replace />
+  if (!isAdmin) return <Navigate to="/tasks" replace />
   return <>{children}</>
 }
 
@@ -59,14 +58,12 @@ function AppRoutes() {
       <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
       <Route path="/sso-callback" element={<SSOCallbackPage />} />
       <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
-      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+        <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route path="/" element={<Navigate to="/tasks" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/board" element={<UserRoute><BoardPage /></UserRoute>} />
-        <Route path="/tasks" element={<TaskListPage />} />
-        <Route path="/tasks/new" element={<TaskFormPage />} />
+        <Route path="/tasks" element={<TasksPage />} />
+        <Route path="/tasks/list" element={<AdminRoute><TaskListPage /></AdminRoute>} />
         <Route path="/tasks/:id" element={<TaskDetailPage />} />
-        <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team/:userId" element={<UserTasksPage />} />
         <Route path="/profile" element={<ProfilePage />} />

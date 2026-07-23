@@ -73,7 +73,7 @@ export function UserTasksPage() {
               {statusTasks.map((task) => (
                 <Link key={task.id} to={`/tasks/${task.id}`} className="flex items-center justify-between px-5 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{task.title}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{task.description || task.title}</p>
                     {task.due_date && <p className={`mt-0.5 flex items-center gap-1 text-xs ${isOverdue(task.due_date) && status !== 'done' ? 'text-red-500' : 'text-gray-400'}`}>
                       <Calendar className="h-3 w-3" />{formatDate(task.due_date)}
                     </p>}

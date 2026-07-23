@@ -142,7 +142,7 @@ export function ProfilePage() {
         <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700 lg:px-6 lg:py-4"><h2 className="text-sm font-semibold text-gray-900 dark:text-white lg:text-base">My Recent Tasks</h2></div>
         <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {myTasks.slice(0, 5).map((task) => (
-            <div key={task.id} className="px-4 py-3 lg:px-6 lg:py-3"><p className="text-sm font-medium text-gray-900 dark:text-white">{task.title}</p><p className="text-xs text-gray-500">Created {formatDate(task.created_at)}</p></div>
+            <div key={task.id} className="px-4 py-3 lg:px-6 lg:py-3">                <p className="text-sm font-medium text-gray-900 dark:text-white">{task.description || task.title}</p><p className="text-xs text-gray-500">Created {formatDate(task.created_at)}</p></div>
           ))}
           {myTasks.length === 0 && <p className="px-4 py-8 text-center text-sm text-gray-400 lg:px-6">No tasks created yet</p>}
         </div>

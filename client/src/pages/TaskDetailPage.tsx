@@ -6,9 +6,10 @@ import { TaskDetailSkeleton } from '../components/ui/PageSkeleton'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Edit2, Trash2, Send, MessageSquare, History } from 'lucide-react'
-import { formatDate, formatDateTime, getTimeAgo } from '../lib/utils'
-import { STATUS_LABELS, PRIORITY_LABELS } from '../lib/constants'
+import { ArrowLeft, Trash2, Send, MessageSquare, History } from 'lucide-react'
+import { formatDateTime, getTimeAgo } from '../lib/utils'
+import { STATUS_LABELS } from '../lib/constants'
+import type { Task } from '../types'
 import type { ActivityLog } from '../types'
 
 export function TaskDetailPage() {
@@ -32,24 +33,15 @@ export function TaskDetailPage() {
       <div className="flex items-center justify-between">
         <Link to="/tasks" className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary"><ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Back</span></Link>
         <div className="flex items-center gap-2">
-          <Link to={`/tasks/${id}/edit`}><Button variant="secondary" size="sm"><Edit2 className="h-4 w-4" /> <span className="hidden sm:inline">Edit</span></Button></Link>
           <Button variant="danger" size="sm" onClick={handleDelete}><Trash2 className="h-4 w-4" /> <span className="hidden sm:inline">Delete</span></Button>
         </div>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
         <div className="mb-3 flex flex-wrap items-center gap-2 lg:mb-4">
-          <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge>
           <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>{STATUS_LABELS[task.status]}</Badge>
         </div>
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white lg:text-2xl">{task.title}</h1>
-        <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 lg:mt-4 lg:gap-6">
-          <span>by <strong>{(task as any).created_by_user?.name || 'Unknown'}</strong></span>
-          <span>{formatDateTime(task.created_at)}</span>
-          {task.due_date && <span>Due {formatDate(task.due_date)}</span>}
-          {task.completed_at && <span>Completed {formatDateTime(task.completed_at)}</span>}
-        </div>
-        {task.description && <p className="mt-3 whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 lg:mt-4 lg:text-base">{task.description}</p>}
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white lg:text-2xl">{task.description || task.title}</h1>
         {(task as any).task_assignees?.length > 0 && (
           <div className="mt-4 lg:mt-6">
             <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Assignees</h3>

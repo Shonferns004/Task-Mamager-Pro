@@ -257,7 +257,7 @@ export function AdminPage() {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {tasks.map((task) => (
                 <tr key={task.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
-                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{task.title}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{task.description || task.title}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{task.created_by_user?.name || 'Unknown'}</td>
                   <td className="px-6 py-4">
                     <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>
@@ -282,7 +282,7 @@ export function AdminPage() {
           {tasks.map((task) => (
             <div key={task.id} className="flex items-center gap-3 px-4 py-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate dark:text-white">{task.title}</p>
+                <p className="text-sm font-medium text-gray-900 truncate dark:text-white">{task.description || task.title}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>
                     {STATUS_LABELS[task.status]}

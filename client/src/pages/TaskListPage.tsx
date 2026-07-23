@@ -176,7 +176,7 @@ export function TaskListPage() {
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Task</th>
                 {isAdmin && <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Owner</th>}
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Priority</th>
@@ -186,7 +186,7 @@ export function TaskListPage() {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {(isAdmin ? tasks : filtered).map((task) => (
                 <tr key={task.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
-                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{task.title}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{task.description || task.title}</td>
                   {isAdmin && <td className="px-6 py-4 text-sm text-gray-500">{(task as any).created_by_user?.name || 'Unknown'}</td>}
                   <td className="px-6 py-4"><Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>{STATUS_LABELS[task.status]}</Badge></td>
                   <td className="px-6 py-4"><Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge></td>
@@ -200,7 +200,7 @@ export function TaskListPage() {
           {(isAdmin ? tasks : filtered).map((task) => (
             <Link key={task.id} to={`/tasks/${task.id}`} className="flex items-center gap-3 px-4 py-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
+                <p className="text-sm font-medium text-gray-900 truncate">{task.description || task.title}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <Badge variant={task.status === 'done' ? 'success' : task.status === 'partially_done' ? 'info' : 'default'}>{STATUS_LABELS[task.status]}</Badge>
                   <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{PRIORITY_LABELS[task.priority]}</Badge>

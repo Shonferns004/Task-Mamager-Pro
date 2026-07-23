@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '../../lib/utils'
 import { useAuth } from '../../hooks/useAuth'
-import { LayoutDashboard, Columns3, ListTodo, Users, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, Columns3, Users, ClipboardList, Table2 } from 'lucide-react'
 
 export function Sidebar() {
   const { isAdmin } = useAuth()
@@ -30,19 +30,6 @@ export function Sidebar() {
           <LayoutDashboard className="h-5 w-5" /> Dashboard
         </NavLink>
 
-        {!isAdmin && (
-          <NavLink
-            to="/board"
-            className={({ isActive }) =>
-              cn('flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                isActive ? 'bg-primary-light text-primary dark:bg-primary/20 dark:text-primary-light'
-                  : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800')
-            }
-          >
-            <Columns3 className="h-5 w-5" /> Board
-          </NavLink>
-        )}
-
         <NavLink
           to="/tasks"
           className={({ isActive }) =>
@@ -51,8 +38,21 @@ export function Sidebar() {
                 : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800')
           }
         >
-          <ListTodo className="h-5 w-5" /> Tasks
+          <Columns3 className="h-5 w-5" /> Tasks
         </NavLink>
+
+        {isAdmin && (
+          <NavLink
+            to="/tasks/list"
+            className={({ isActive }) =>
+              cn('flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                isActive ? 'bg-primary-light text-primary dark:bg-primary/20 dark:text-primary-light'
+                  : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800')
+            }
+          >
+            <Table2 className="h-5 w-5" /> All Tasks
+          </NavLink>
+        )}
 
         <NavLink
           to="/team"

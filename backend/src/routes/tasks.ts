@@ -35,11 +35,11 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
   const { title, description, status, priority, due_date, assignee_ids } = req.body
-  if (!title?.trim()) return res.status(400).json({ error: 'Title is required' })
+  if (!description?.trim() && !title?.trim()) return res.status(400).json({ error: 'Description is required' })
 
   const { data: task, error } = await supabaseAdmin.from('tasks').insert({
-    title: title.trim(),
-    description: description?.trim() || '',
+    title: title?.trim() || null,
+    description: description?.trim() || title?.trim() || '',
     status: status || 'pending',
     priority: priority || 'medium',
     due_date: due_date || null,

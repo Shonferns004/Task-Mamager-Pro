@@ -96,8 +96,7 @@ export function DashboardPage() {
           {recentTasks.map((task) => (
             <Link key={task.id} to={`/tasks/${task.id}`} className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750 lg:px-6 lg:py-3">
               <div className="flex items-center gap-2 lg:gap-3">
-                <Badge variant={task.priority === 'critical' ? 'danger' : task.priority === 'high' ? 'warning' : task.priority === 'medium' ? 'info' : 'default'}>{task.priority}</Badge>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">{task.title}</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">{task.description || task.title}</span>
               </div>
               <div className="hidden items-center gap-3 text-sm text-gray-500 sm:flex">
                 <span>{STATUS_LABELS[task.status]}</span>

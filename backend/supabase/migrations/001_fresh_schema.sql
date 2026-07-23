@@ -110,10 +110,6 @@ BEGIN
       INSERT INTO activity_logs (task_id, user_id, action, details)
       VALUES (NEW.id, NEW.created_by, 'status_changed', jsonb_build_object('from', OLD.status, 'to', NEW.status));
     END IF;
-    IF OLD.priority <> NEW.priority THEN
-      INSERT INTO activity_logs (task_id, user_id, action, details)
-      VALUES (NEW.id, NEW.created_by, 'priority_changed', jsonb_build_object('from', OLD.priority, 'to', NEW.priority));
-    END IF;
     IF OLD.title <> NEW.title THEN
       INSERT INTO activity_logs (task_id, user_id, action, details)
       VALUES (NEW.id, NEW.created_by, 'title_changed', jsonb_build_object('from', OLD.title, 'to', NEW.title));

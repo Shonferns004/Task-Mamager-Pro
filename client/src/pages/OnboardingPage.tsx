@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button'
 import { Eye, EyeOff, ArrowRight, ArrowLeft, Check } from 'lucide-react'
 
 export function OnboardingPage() {
-  const { profile } = useAuth()
+  const { profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const defaultName = profile?.email ? profile.email.split('@')[0] : ''
   const [step, setStep] = useState(1)
@@ -29,6 +29,7 @@ export function OnboardingPage() {
           console.error('Password update failed:', e)
         }
       }
+      await refreshProfile()
       navigate('/tasks')
     } catch (err: any) {
       setError(err.errors?.[0]?.longMessage || err.message || 'Something went wrong')

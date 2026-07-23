@@ -37,11 +37,7 @@ function DraggableTask({ task }: { task: Task }) {
   )
 }
 
-function DroppableColumn({ status, children, count, adding, desc, onDescChange, onAdd, onStartAdd, onCancelAdd, saving }: {
-  status: TaskStatus; children: React.ReactNode; count: number;
-  adding: boolean; desc: string; onDescChange: (v: string) => void;
-  onAdd: () => void; onStartAdd: () => void; onCancelAdd: () => void; saving: boolean;
-}) {
+function DroppableColumn({ status, children, count }: { status: TaskStatus; children: React.ReactNode; count: number }) {
   const { isOver, setNodeRef } = useDroppable({ id: status })
   const col = columns.find((c) => c.id === status)!
   return (
@@ -54,24 +50,9 @@ function DroppableColumn({ status, children, count, adding, desc, onDescChange, 
         </div>
         <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-200 px-1.5 text-[11px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400">{count}</span>
       </div>
-      <div className={`flex flex-col gap-2 p-3 ${isOver ? 'bg-primary/5' : ''}`}>
+      <div className={`flex flex-col gap-2 p-3 min-h-[200px] ${isOver ? 'bg-primary/5 rounded-b-xl' : ''}`}>
         {children}
-      </div>
-      <div className="mx-3 mb-3 flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
-        {adding ? (
-          <div className="w-full space-y-2">
-            <textarea value={desc} onChange={(e) => onDescChange(e.target.value)} placeholder="Describe the task..." rows={2} autoFocus
-              className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" />
-            <div className="flex items-center gap-2">
-              <Button size="sm" onClick={onAdd} loading={saving} disabled={!desc.trim()}>Add</Button>
-              <Button size="sm" variant="secondary" onClick={onCancelAdd}>Cancel</Button>
-            </div>
-          </div>
-        ) : (
-          <button type="button" onClick={onStartAdd} className="flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-primary">
-            <Plus className="h-4 w-4" /> Add Task
-          </button>
-        )}
+        {count === 0 && <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 p-6 dark:border-gray-700"><p className="text-xs text-gray-400">No tasks</p></div>}
       </div>
     </div>
   )
@@ -127,12 +108,26 @@ export function TasksPage() {
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex flex-col gap-4 pb-4 lg:flex-row lg:gap-4">
           {columns.map((col) => (
-            <DroppableColumn key={col.id} status={col.id} count={getColumnTasks(col.id).length}
-              adding={addingTo === col.id} desc={newDesc} onDescChange={setNewDesc}
-              onAdd={() => handleAdd(col.id)} onStartAdd={() => startAdd(col.id)}
-              onCancelAdd={() => setAddingTo(null)} saving={saving}>
-              {getColumnTasks(col.id).map((task) => <DraggableTask key={task.id} task={task} />)}
-            </DroppableColumn>
+            <div key={col.id} className="flex w-full flex-col lg:flex-1">
+              <DroppableColumn status={col.id} count={getColumnTasks(col.id).length}>
+                {getColumnTasks(col.id).map((task) => <DraggableTask key={task.id} task={task} />)}
+              </DroppableColumn>
+              {addingTo === col.id ? (
+                <div className="mt-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+                  <textarea value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder="Describe the task..." rows={2} autoFocus
+                    className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" />
+                  <div className="mt-2 flex items-center gap-2">
+                    <Button size="sm" onClick={() => handleAdd(col.id)} loading={saving} disabled={!newDesc.trim()}>Add</Button>
+                    <Button size="sm" variant="secondary" onClick={() => setAddingTo(null)}>Cancel</Button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => startAdd(col.id)}
+                  className="mt-2 flex items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-gray-200 py-2.5 text-sm text-gray-400 transition-colors hover:border-primary/50 hover:text-primary dark:border-gray-700 dark:hover:border-primary/50">
+                  <Plus className="h-4 w-4" /> Add Task
+                </button>
+              )}
+            </div>
           ))}
         </div>
         <DragOverlay>

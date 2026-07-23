@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors,
+  DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
   type DragStartEvent, type DragEndEvent, useDraggable, useDroppable,
 } from '@dnd-kit/core'
 import { useTasks } from '../hooks/useTasks'
@@ -94,8 +94,7 @@ export function TasksPage() {
   const [newDesc, setNewDesc] = useState('')
   const [saving, setSaving] = useState(false)
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 20 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   )
   const getColumnTasks = useCallback((status: TaskStatus) => tasks.filter((t) => t.status === status), [tasks])
 

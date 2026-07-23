@@ -133,7 +133,7 @@ export function TasksPage() {
   if (loading) return <BoardSkeleton />
 
   return (
-    <div className="space-y-4 lg:space-y-6">
+    <div className="space-y-4 lg:space-y-6 rounded-xl border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white lg:text-2xl">Tasks</h1>
       </div>
